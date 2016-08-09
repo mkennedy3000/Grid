@@ -2,6 +2,13 @@
 
 Typescript Immutable 2d grid with transformation functions.
 
+## Install
+```
+npm install @mkennedy3000/grid
+```
+
+## Usage
+
 [Create](#create)
 * [constructor](#constructor)
 * [`Grid.withRows(rows)`](#withrows)
@@ -25,13 +32,6 @@ Typescript Immutable 2d grid with transformation functions.
     * [`rotate90()`](#rotate90)
     * [`rotate180()`](#rotate180)
     * [`rotate270()`](#rotate270)
-
-## Install
-```
-npm install @mkennedy3000/grid
-```
-
-## Usage
 
 ### Create
 
