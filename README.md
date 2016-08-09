@@ -114,8 +114,25 @@ const grid = Grid.withRows([[1,2,3],[4,5,6]]).transpose().transpose();
 4 5 6    2 5    4 5 6
          3 6
 ```
+
 #### `flipX()`
+```typescript
+const grid = Grid.withRows([[1,2,3],[4,5,6]]).flipX();
+```
+```
+1 2 3 => 3 2 1
+4 5 6    6 5 4
+```
+
 #### `flipY()`
+```typescript
+const grid = Grid.withRows([[1,2,3],[4,5,6]]).flipY();
+```
+```
+1 2 3 => 4 5 6
+4 5 6    1 2 3
+```
+
 #### `rotate90()`
 ```typescript
 const grid = Grid.withRows([[1,2,3],[4,5,6]]).rotate90();
@@ -125,6 +142,7 @@ const grid = Grid.withRows([[1,2,3],[4,5,6]]).rotate90();
 4 5 6    5 2
          6 3
 ```
+
 #### `rotate180()`
 ```typescript
 const grid = Grid.withRows([[1,2,3],[4,5,6]]).rotate180();
@@ -133,6 +151,7 @@ const grid = Grid.withRows([[1,2,3],[4,5,6]]).rotate180();
 1 2 3 => 6 5 4
 4 5 6    3 2 1
 ```
+
 #### `rotate270()`
 ```typescript
 const grid = Grid.withRows([[1,2,3],[4,5,6]]).rotate270();
