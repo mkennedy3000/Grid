@@ -4,9 +4,24 @@ var Grid = (function () {
         this.array = array;
         this._width = _width;
         this._height = _height;
+        if (!array) {
+            throw new Error('Grid representation not provided');
+        }
+        else if (!_width) {
+            throw new Error('Width not defined');
+        }
+        else if (!_height) {
+            throw new Error('Height not defined');
+        }
+        else if ((_width * _height) > array.length) {
+            throw new Error('Grid representation too small');
+        }
     }
     Grid.withRows = function (rows) {
         var w = rows[0].length;
+        if (!rows.every(function (row) { return row.length === w; })) {
+            throw new Error('Grid must be rectangular');
+        }
         var h = rows.length;
         return new Grid(rows.reduce(function (grid, row) { return grid.concat(row); }, []), w, h);
     };
@@ -14,15 +29,13 @@ var Grid = (function () {
         return Grid.withRows(cols.reverse()).rotate90();
     };
     Grid.prototype.transpose = function () {
-        var _this = this;
-        var transposed = this.array.map(function (val, ind) { return _this.get(_this.rowNum(ind), _this.colNum(ind)); }, this);
-        return new Grid(transposed, this.width, this.height);
+        return Grid.withRows(this.cols);
     };
     Grid.prototype.flipX = function () {
-        return Grid.withRows(this.rows().map(function (row) { return row.reverse(); }));
+        return Grid.withRows(this.rows.map(function (row) { return row.reverse(); }));
     };
     Grid.prototype.flipY = function () {
-        return Grid.withCols(this.cols().map(function (col) { return col.reverse(); }));
+        return Grid.withCols(this.cols.map(function (col) { return col.reverse(); }));
     };
     Grid.prototype.rotate90 = function () {
         return this.transpose().flipX();
@@ -50,13 +63,21 @@ var Grid = (function () {
         enumerable: true,
         configurable: true
     });
-    Grid.prototype.rows = function () {
-        var self = this;
-        return this.array.reduce(function (grid, val, ind) {
-            grid[self.rowNum(ind)].push(val);
-            return grid;
-        }, Array.from(new Array(this.numRows), function () { return []; }));
-    };
+    Object.defineProperty(Grid.prototype, "rows", {
+        get: function () {
+            var self = this;
+            var newGrid = [];
+            while (newGrid.length < this.numRows) {
+                newGrid.push([]);
+            }
+            return this.array.reduce(function (grid, val, ind) {
+                grid[self.rowNum(ind)].push(val);
+                return grid;
+            }, newGrid);
+        },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Grid.prototype, "width", {
         get: function () {
             return this._width;
@@ -71,21 +92,29 @@ var Grid = (function () {
         enumerable: true,
         configurable: true
     });
-    Grid.prototype.cols = function () {
-        var self = this;
-        return this.array.reduce(function (grid, val, ind) {
-            grid[self.colNum(ind)].push(val);
-            return grid;
-        }, Array.from(new Array(this.numCols), function () { return []; }));
-    };
+    Object.defineProperty(Grid.prototype, "cols", {
+        get: function () {
+            var self = this;
+            var newGrid = [];
+            while (newGrid.length < this.numCols) {
+                newGrid.push([]);
+            }
+            return this.array.reduce(function (grid, val, ind) {
+                grid[self.colNum(ind)].push(val);
+                return grid;
+            }, newGrid);
+        },
+        enumerable: true,
+        configurable: true
+    });
     Grid.prototype.pos = function (x, y) {
         return (y * this.width) + x;
     };
     Grid.prototype.rowNum = function (pos) {
-        return (pos - this.colNum(pos)) / this.numCols;
+        return Math.ceil((pos - this.colNum(pos)) / this.numCols);
     };
     Grid.prototype.colNum = function (pos) {
-        return pos % this.numRows;
+        return pos % this.width;
     };
     return Grid;
 }());

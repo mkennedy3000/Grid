@@ -14,10 +14,10 @@ export declare class Grid<T> {
     get(x: number, y: number): T;
     height: number;
     numRows: number;
-    rows(): Array<Array<T>>;
+    rows: Array<Array<T>>;
     width: number;
     numCols: number;
-    cols(): Array<Array<T>>;
+    cols: Array<Array<T>>;
     private pos(x, y);
     private rowNum(pos);
     private colNum(pos);
