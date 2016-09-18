@@ -3,10 +3,23 @@ export class Grid<T> {
     constructor(private array: Array<T>,
                 private _width: number,
                 private _height: number
-    ) {}
+    ) {
+        if (!array) {
+            throw new Error('Grid representation not provided');
+        } else if (!_width) {
+            throw new Error('Width not defined');
+        } else if (!_height) {
+            throw new Error('Height not defined')
+        } else if ((_width * _height) > array.length) {
+            throw new Error('Grid representation too small');
+        }
+    }
 
     public static withRows<U>(rows: Array<Array<U>>): Grid<U> {
         const w = rows[0].length;
+        if (!rows.every((row) => row.length === w)) {
+            throw new Error('Grid must be rectangular');
+        }
         const h = rows.length;
         return new Grid(rows.reduce((grid, row) => grid.concat(row), []), w, h);
     }
@@ -16,8 +29,7 @@ export class Grid<T> {
     }
 
     public transpose(): Grid<T> {
-        let transposed = this.array.map((val, ind) => this.get(this.rowNum(ind), this.colNum(ind)), this)
-        return new Grid(transposed, this.width, this.height);
+        return Grid.withRows(this.cols);
     }
 
     public flipX(): Grid<T> {
@@ -54,10 +66,14 @@ export class Grid<T> {
 
     get rows(): Array<Array<T>> {
         const self = this;
+        let newGrid = [];
+        while (newGrid.length < this.numRows) {
+            newGrid.push([]);
+        }
         return this.array.reduce((grid, val, ind) => {
             grid[self.rowNum(ind)].push(val);
             return grid;
-        }, Array.from(new Array(this.numRows), ()=>[]));
+        }, newGrid);
     }
 
     get width(): number {
@@ -70,10 +86,14 @@ export class Grid<T> {
 
     get cols(): Array<Array<T>> {
         const self = this;
+        let newGrid = [];
+        while (newGrid.length < this.numCols) {
+            newGrid.push([]);
+        }
         return this.array.reduce((grid, val, ind) => {
             grid[self.colNum(ind)].push(val);
             return grid;
-        }, Array.from(new Array(this.numCols), ()=>[]));
+        }, newGrid);
     }
 
     private pos(x: number, y: number): number {
@@ -81,11 +101,11 @@ export class Grid<T> {
     }
 
     private rowNum(pos: number): number {
-        return (pos - this.colNum(pos)) / this.numCols;
+        return Math.ceil((pos - this.colNum(pos)) / this.numCols);
     }
 
     private colNum(pos: number): number {
-        return pos % this.numRows;
+        return pos % this.width;
     }
 
 }
